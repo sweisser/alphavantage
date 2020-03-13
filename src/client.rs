@@ -26,8 +26,9 @@ impl Client {
         &self,
         symbol: &str,
         interval: time_series::IntradayInterval,
+        full: bool
     ) -> Result<time_series::TimeSeries, Error> {
-        self.get_time_series(&time_series::Function::IntraDay(interval), symbol)
+        self.get_time_series(&time_series::Function::IntraDay(interval), symbol, full)
             .await
     }
 
@@ -35,8 +36,9 @@ impl Client {
     pub async fn get_time_series_daily(
         &self,
         symbol: &str,
+        full: bool
     ) -> Result<time_series::TimeSeries, Error> {
-        self.get_time_series(&time_series::Function::Daily, symbol)
+        self.get_time_series(&time_series::Function::Daily, symbol, full)
             .await
     }
 
@@ -44,8 +46,9 @@ impl Client {
     pub async fn get_time_series_weekly(
         &self,
         symbol: &str,
+        full: bool
     ) -> Result<time_series::TimeSeries, Error> {
-        self.get_time_series(&time_series::Function::Weekly, symbol)
+        self.get_time_series(&time_series::Function::Weekly, symbol, full)
             .await
     }
 
@@ -53,8 +56,9 @@ impl Client {
     pub async fn get_time_series_monthly(
         &self,
         symbol: &str,
+        full: bool
     ) -> Result<time_series::TimeSeries, Error> {
-        self.get_time_series(&time_series::Function::Monthly, symbol)
+        self.get_time_series(&time_series::Function::Monthly, symbol, full)
             .await
     }
 
@@ -80,8 +84,10 @@ impl Client {
         &self,
         function: &time_series::Function,
         symbol: &str,
+        full: bool
     ) -> Result<time_series::TimeSeries, Error> {
-        let mut params = vec![("symbol", symbol)];
+        let outputsize = match full { true => "full", false => "compact"};
+        let mut params = vec![("symbol", symbol), ("outputsize", outputsize)];
         if let time_series::Function::IntraDay(interval) = function {
             params.push(("interval", interval.to_string()));
         }
