@@ -29,35 +29,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let symbol = &args.symbol;
     let client = Client::new(&token);
 
+    let full = false;
     let time_series = match args.period.as_str() {
         "1min" => {
             client
-                .get_time_series_intraday(symbol, IntradayInterval::OneMinute)
+                .get_time_series_intraday(symbol, IntradayInterval::OneMinute, full)
                 .await
         }
         "5min" => {
             client
-                .get_time_series_intraday(symbol, IntradayInterval::FiveMinutes)
+                .get_time_series_intraday(symbol, IntradayInterval::FiveMinutes, full)
                 .await
         }
         "15min" => {
             client
-                .get_time_series_intraday(symbol, IntradayInterval::FifteenMinutes)
+                .get_time_series_intraday(symbol, IntradayInterval::FifteenMinutes, full)
                 .await
         }
         "30min" => {
             client
-                .get_time_series_intraday(symbol, IntradayInterval::ThirtyMinutes)
+                .get_time_series_intraday(symbol, IntradayInterval::ThirtyMinutes, full)
                 .await
         }
         "hourly" => {
             client
-                .get_time_series_intraday(symbol, IntradayInterval::SixtyMinutes)
+                .get_time_series_intraday(symbol, IntradayInterval::SixtyMinutes, full)
                 .await
         }
-        "daily" => client.get_time_series_daily(symbol).await,
-        "weekly" => client.get_time_series_weekly(symbol).await,
-        "monthly" => client.get_time_series_monthly(symbol).await,
+        "daily" => client.get_time_series_daily(symbol, full).await,
+        "weekly" => client.get_time_series_weekly(symbol, full).await,
+        "monthly" => client.get_time_series_monthly(symbol, full).await,
         _ => Err(format!("unknown period {}", args.period))?,
     }?;
 

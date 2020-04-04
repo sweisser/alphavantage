@@ -28,25 +28,25 @@ impl Client {
         interval: time_series::IntradayInterval,
     ) -> Result<time_series::TimeSeries, Error> {
         let function = time_series::Function::IntraDay(interval);
-        self.get_time_series(&function, symbol)
+        self.get_time_series(&function, symbol, false)
     }
 
     /// Retrieve daily time series for the specified `symbol` including up to 20 years of historical data.
-    pub fn get_time_series_daily(&self, symbol: &str) -> Result<time_series::TimeSeries, Error> {
+    pub fn get_time_series_daily(&self, symbol: &str, full: bool) -> Result<time_series::TimeSeries, Error> {
         let function = time_series::Function::Daily;
-        self.get_time_series(&function, symbol)
+        self.get_time_series(&function, symbol, full)
     }
 
     /// Retrieve weekly time series for the specified `symbol` including up to 20 years of historical data.
     pub fn get_time_series_weekly(&self, symbol: &str) -> Result<time_series::TimeSeries, Error> {
         let function = time_series::Function::Weekly;
-        self.get_time_series(&function, symbol)
+        self.get_time_series(&function, symbol, false)
     }
 
     /// Retrieve monthly time series for the specified `symbol` including up to 20 years of historical data.
     pub fn get_time_series_monthly(&self, symbol: &str) -> Result<time_series::TimeSeries, Error> {
         let function = time_series::Function::Monthly;
-        self.get_time_series(&function, symbol)
+        self.get_time_series(&function, symbol, false)
     }
 
     /// Retrieve the exchange rate from the currency specified by `from_currency_code` to the
@@ -70,8 +70,10 @@ impl Client {
         &self,
         function: &time_series::Function,
         symbol: &str,
+        full: bool
     ) -> Result<time_series::TimeSeries, Error> {
-        let mut params = vec![("symbol", symbol)];
+        let outputsize = match full { true => "full", false => "compact"};
+        let mut params = vec![("symbol", symbol), ("outputsize", outputsize)];
         if let time_series::Function::IntraDay(interval) = function {
             params.push(("interval", interval.to_string()));
         }
